@@ -1,6 +1,9 @@
 npm i
 
-You need to create a root .env folder which includes:
-URI="YOUR_STRING_URI"
+You are supposed to create .env file at the root folder of the project which includes:
+
+URI="YOUR_CONNECTION_STRING"
+
 PORT=YOUR_PORT
+
 ACCESS_TOKEN_SECRET=YOUR_FAVORITE
