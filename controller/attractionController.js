@@ -6,7 +6,9 @@ import Attractions from '../model/attractionsModel.js'
 //@desc submit
 //@route Post /attractions
 export const submit = asyncHandler(async (req, res, next) => {
-  const { name, description, image } = req.query
+  // console.log(req.file)
+  const { name, description } = req.body
+  const image = req.file ? req.file.path : null
   if(!name || !description || !image) {
     const error = new Error('未获得所需数据')
     error.status = 400
@@ -66,7 +68,7 @@ export const getAttractionsList = asyncHandler(async (req, res, next) => {
     const data = attractions.map(attraction => ({
       name: attraction.name,
       description: attraction.description,
-      image: attraction.image,
+      image: `http://localhost:3000/${attraction.image.replace(/\\/g, '/')}`,
       exclusiveID: attraction.exclusiveID
     }))
 

@@ -7,7 +7,8 @@ import Tours from '../model/toursModel.js'
 //@desc submit
 //@route Post /tours
 export const submit = asyncHandler(async (req, res, next) => {
-  const { name, description, image } = req.query
+  const { name, description } = req.body
+  const image = req.file ? req.file.path : null
   if(!name || !description || !image) {
     const error = new Error('未获得所需数据')
     error.status = 400
@@ -65,7 +66,7 @@ export const getToursList = asyncHandler(async (req, res, next) => {
     const data = tours.map(tour => ({
       name: tour.name,
       description: tour.description,
-      image: tour.image,
+      image: `http://localhost:3000/${tour.image.replace(/\\/g, '/')}`,
       exclusiveID: tour.exclusiveID
     }))
 

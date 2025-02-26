@@ -8,7 +8,7 @@ import Users from '../model/usersModel.js'
 export const getOrdersList = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page)
   const size = parseInt(req.query.size)
-  const userId = req.query.userId
+  const userId = req.query.uid
   if(!page || !size || !userId) {
     const error = new Error('未获得所需数据')
     error.status = 400
@@ -16,18 +16,15 @@ export const getOrdersList = asyncHandler(async (req, res, next) => {
   }
 
   try {
-    const checkUid = await Orders.findOne({ userId: userId })
-    if (!checkUid) {
-      const error = new Error('未找到此用户')
-      error.status = 400
-      return next(error)
-    }
-    const totalOrders = await Orders.countDocuments()
-    // 总页数
+    const totalOrders = await Orders.countDocuments({ userId: userId });
     const skipPages = (page - 1) * size
     const totalPages = Math.ceil(totalOrders / size)
-    const orders = (skipPages >= totalOrders) ? await Orders.find({ userId: userId }) : await Orders.find({ userId: userId }).skip(skipPages).limit(size)
-    
+    let orders
+    if (skipPages >= totalOrders) {
+      orders = []
+    } else {
+      orders = await Orders.find({ userId: userId }).skip(skipPages).limit(size)
+    }
     const data = orders.map(order => ({
       name: order.name,
       description: order.description,
@@ -37,7 +34,6 @@ export const getOrdersList = asyncHandler(async (req, res, next) => {
       orderID: order.orderId,
       exclusiveID: order.exclusiveID
     }))
-
     res.status(200).json({
       message: '获取成功',
       total: totalOrders,
@@ -89,7 +85,7 @@ export const orderTour = asyncHandler(async (req, res, next) => {
       message: '订单创建成功',
       data: {
         orderID: orderData.orderID,
-        userId: orderData.userId,
+        uid: orderData.userId,
         exclusiveID: orderData.exclusiveID
       }
     })

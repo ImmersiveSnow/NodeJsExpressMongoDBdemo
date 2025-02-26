@@ -7,7 +7,10 @@ import jwt from 'jsonwebtoken'
 //@desc register 
 //@route Post /users/register
 export const register = asyncHandler(async (req, res, next) => {
-  const { username, password } = req.query
+  // console.log(req.body)
+  // console.log(req.query)
+  
+  const { username, password } = req.body
   if (!username || !password) {
     const error = new Error('未获得所需数据')
     error.status = 400

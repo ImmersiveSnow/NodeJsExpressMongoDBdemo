@@ -49,7 +49,7 @@ export const getCommentsList = asyncHandler(async (req, res, next) => {
       exclusiveID: exclusiveID
     })
     const data = comments.map(comment => ({
-      userId: comment.userId,
+      uid: comment.userId,
       content: comment.content
     }))
 
