@@ -6,7 +6,7 @@ const ordersRouter = express.Router()
 ordersRouter.get('/page', getOrdersList)
 
 // orderTour
-ordersRouter.post('/', orderTour)
+ordersRouter.put('/', orderTour)
 
 // delOrder
 ordersRouter.delete('/', delOrder)

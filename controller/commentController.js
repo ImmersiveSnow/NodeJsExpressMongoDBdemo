@@ -6,9 +6,8 @@ import Comments from '../model/commentsModel.js'
 //@desc submit
 //@route Post /comments
 export const submit = asyncHandler(async (req, res, next) => {
-  const { userId, content, toursId, attractionsId } = req.body
-  const exclusiveID = toursId || attractionsId
-  if(!userId || !content || !exclusiveID) {
+  const { uid, content, exclusiveID } = req.body
+  if(!uid || !content || !exclusiveID) {
     const error = new Error('未获得所需数据')
     error.status = 400
     return next(error)
@@ -16,7 +15,7 @@ export const submit = asyncHandler(async (req, res, next) => {
 
   try {
     await Comments.create({
-      userId, 
+      userId: uid, 
       exclusiveID,
       content
     })
@@ -35,8 +34,8 @@ export const submit = asyncHandler(async (req, res, next) => {
 //@desc getCommentsList
 //@route Get /comments
 export const getCommentsList = asyncHandler(async (req, res, next) => {
-  const { toursId, attractionsId } = req.body
-  const exclusiveID = toursId || attractionsId
+  console.log(req.query)
+  const { exclusiveID } = req.query
   if(!exclusiveID) {
     const error = new Error('未获得所需数据')
     error.status = 400

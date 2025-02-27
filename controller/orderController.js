@@ -28,10 +28,10 @@ export const getOrdersList = asyncHandler(async (req, res, next) => {
     const data = orders.map(order => ({
       name: order.name,
       description: order.description,
-      image: order.image,
+      image: `http://localhost:3000/${order.image.replace(/\\/g, '/')}`,
       number: order.number,
       time: order.time,
-      orderID: order.orderId,
+      orderID: order.orderID,
       exclusiveID: order.exclusiveID
     }))
     res.status(200).json({
@@ -48,15 +48,18 @@ export const getOrdersList = asyncHandler(async (req, res, next) => {
 })
 
 //@desc orderTour
-//@route Post /orders
+//@route Put /orders
 export const orderTour = asyncHandler(async (req, res, next) => {
-  const { userId, toursId, title, number } = req.body
-  if (!userId || !toursId || !title || !number) {
+  console.log(req.body)
+  console.log(req.query)
+  
+  const { uid, toursId, title, number } = req.body
+  if (!uid || !toursId || !title || !number) {
     const error = new Error('未获得所需数据')
     error.status = 400
     return next(error)
   }
-  const checkUid = await Users.findOne({ userId: userId })
+  const checkUid = await Users.findOne({ userId: uid })
   if (!checkUid) {
     const error = new Error('未找到此用户')
     error.status = 400
@@ -74,7 +77,7 @@ export const orderTour = asyncHandler(async (req, res, next) => {
       name: tourData.name,
       description: tourData.description,
       image: tourData.image,
-      userId, 
+      userId: uid, 
       exclusiveID: toursId,
       title,
       number,
@@ -85,7 +88,7 @@ export const orderTour = asyncHandler(async (req, res, next) => {
       message: '订单创建成功',
       data: {
         orderID: orderData.orderID,
-        uid: orderData.userId,
+        uid: orderData.uid,
         exclusiveID: orderData.exclusiveID
       }
     })
@@ -100,8 +103,8 @@ export const orderTour = asyncHandler(async (req, res, next) => {
 //@desc delOrder
 //@route Delete /orders
 export const delOrder = asyncHandler(async (req, res, next) => {
-  const { orderID, userId } = req.query
-  if (!orderID || !userId) {
+  const { orderID, uid } = req.body
+  if (!orderID || !uid) {
     const error = new Error('未获得所需数据')
     error.status = 400
     return next(error)
@@ -109,7 +112,7 @@ export const delOrder = asyncHandler(async (req, res, next) => {
 
   try {
     const order = await Orders.deleteOne({ 
-      userId: userId,
+      userId: uid,
       orderID: orderID 
     })
     if (order.deletedCount === 0) {
